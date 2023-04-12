@@ -1,21 +1,20 @@
 import {createApp} from 'vue'
 import App from './App.vue'
-import './samples/node-api'
 
-import Varlet from '@varlet/ui'
-import '@varlet/ui/es/style'
-
-import {createRouter, createWebHashHistory} from "vue-router";
+import {createRouter, createWebHistory} from "vue-router";
 import routes from "./routes";
 
+import Antd from 'ant-design-vue';
+import 'ant-design-vue/dist/antd.css';
+
 const router = createRouter({
-    history: createWebHashHistory(),
+    history: createWebHistory(),
     routes
 })
 
 createApp(App)
     .use(router)
-    .use(Varlet)
+    .use(Antd)
     .mount('#app')
     .$nextTick(() => {
         postMessage({payload: 'removeLoading'}, '*')
