@@ -19,3 +19,13 @@ createApp(App)
     .$nextTick(() => {
         postMessage({payload: 'removeLoading'}, '*')
     })
+
+declare global {
+    interface Window {
+        // [key: string]: any
+        electronAPI: {
+            importFile: () => Promise<any>;
+            exit: () => void;
+        }
+    }
+}

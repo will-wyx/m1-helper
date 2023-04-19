@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import theme from './theme';
 
-console.log("[App.vue]", `Hello world from Electron ${process.versions.electron}!`)
-
 function handleBtn1() {
   console.log('btn 1')
 }
