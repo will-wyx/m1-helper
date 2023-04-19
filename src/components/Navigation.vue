@@ -4,9 +4,7 @@ function handleClick({key}: { key: string }) {
     switch (key) {
         case 'import':
             window.electronAPI.importFile()
-                .then(res => {
-                    console.log('import completed');
-                })
+                .then()
             break;
         case 'exit':
             window.electronAPI.exit()
