@@ -1,8 +1,8 @@
-import {dialog, ipcMain} from 'electron';
+import {dialog, WebContents} from 'electron';
 import fs from 'node:fs';
 import ParkPlace from "./protocol/ParkPlace";
 
-ipcMain.handle('import-file', () => {
+export default function importFile(protocol: ParkPlace) {
     dialog.showOpenDialog({
         filters: [
             {name: '', extensions: ['dump']}
@@ -10,18 +10,13 @@ ipcMain.handle('import-file', () => {
     })
         .then(res => {
             const filePath = res.filePaths[0];
-            console.log(filePath);
             fs.readFile(filePath, (err, data) => {
-                const protocol = new ParkPlace(data);
+                protocol.decode(data);
+                protocol.persistence()
+                    .then(() => {
+                        const webContents: WebContents = global.webContents;
+                        webContents.send('import-success');
+                    })
             })
         })
-})
-
-function bufferToHex(buf) {
-    let iter = buf.values();
-    let hexArr = [];
-    for (let item of iter) {
-        hexArr.push(item.toString(16));
-    }
-    console.log(hexArr.join(''));
 }

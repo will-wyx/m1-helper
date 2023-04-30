@@ -94,12 +94,24 @@ window.onmessage = (ev) => {
 setTimeout(removeLoading, 4999)
 
 contextBridge.exposeInMainWorld('electronAPI', {
+    loadData: () => {
+        return new Promise((resolve, reject) => {
+            ipcRenderer
+                .invoke('load-data')
+                .then((data: Promise<any>) => {
+                    resolve(data);
+                })
+                .catch(() => {
+                    reject();
+                })
+        })
+    },
     importFile: () => {
         return new Promise((resolve, reject) => {
             ipcRenderer
                 .invoke('import-file')
-                .then(() => {
-                    resolve(null);
+                .then((filePromise: Promise<any>) => {
+                    resolve(filePromise);
                 })
                 .catch(() => {
                     reject();

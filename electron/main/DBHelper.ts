@@ -21,7 +21,14 @@ export default class DBHelper {
      * 初始化数据表
      */
     init() {
-        this.db.run('create table if not exists m1 (serial text, building text, path text)');
+        this.db.run(`
+create table if not exists m1 (
+buffer blob,
+uid text, floor integer, expireTime blob, 
+elevator1 integer, elevator2 integer, 
+rollCode1 integer, rollCode2 integer, 
+keyA text, keyB text)
+`);
     }
 
     /**
@@ -31,11 +38,11 @@ export default class DBHelper {
      */
     run(sql, params) {
         return new Promise((resolve, reject) => {
-            this.db.run(sql, params, err => {
+            this.db.run(sql, params, (err, rows, fields, result) => {
                 if (err) {
                     reject(err);
                 } else {
-                    resolve(null);
+                    resolve(true);
                 }
             })
         });

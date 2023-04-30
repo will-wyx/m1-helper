@@ -1,8 +1,9 @@
 import BaseProtocol from "./BaseProtocol";
+import DBHelper from "../DBHelper";
 
 export default class ParkPlace extends BaseProtocol {
     // 楼层号（从右向左逐位表示，最右侧为 1 层）
-    private floor: bigint;
+    private floor: string;
     // 到期时间
     private expireTime: Buffer;
     // 电梯号 1
@@ -26,17 +27,13 @@ export default class ParkPlace extends BaseProtocol {
     // KeyB
     private keyB: string;
 
-    constructor(buffer: Buffer) {
-        super(buffer);
-        this.decode();
-    }
-
-    decode() {
+    decode(buffer: Buffer) {
+        super.decode(buffer);
         let index = 0;
         // 读取 4 位卡号
-        let buffer = this.buffer.slice(index, index + 4)
+        let tempBuffer = this.buffer.slice(index, index + 4)
         index += 4;
-        this.uid = buffer.toString('hex');
+        this.uid = tempBuffer.toString('hex');
         // 读取 1 位卡号检验位
         this.uidCheckBit = this.buffer.readUInt8(index);
         index += 1;
@@ -47,10 +44,11 @@ export default class ParkPlace extends BaseProtocol {
         // 每个扇区有 4 个区块，每个区块有 16 个字节
         index = 7 * 4 * 16;
         // 接下来的 8 个字节好像是用户信息
-        buffer = this.buffer.slice(index, index + 8);
+        tempBuffer = this.buffer.slice(index, index + 8);
         index += 8;
         // 接下来的 8 个字节是楼层号
-        this.floor = this.buffer.readBigUInt64BE(index);
+        const floor = this.buffer.readBigUInt64BE(index);
+        this.floor = floor.toString(2).padStart(22, '0');
         index += 8;
         // 接下来 2 个字节不知道是什么
         index += 2;
@@ -87,16 +85,67 @@ export default class ParkPlace extends BaseProtocol {
         index += 6;
         // 接下来是控制块
         // 有 6 个字节是 Key A
-        buffer = this.buffer.slice(index, index + 6);
+        tempBuffer = this.buffer.slice(index, index + 6);
         index += 6;
-        this.keyA = buffer.toString('hex');
+        this.keyA = tempBuffer.toString('hex');
         // 有 4 个字节是存取控制
-        buffer = this.buffer.slice(index, index + 4);
+        tempBuffer = this.buffer.slice(index, index + 4);
         index += 4;
-        this.storageControl = buffer.toString('hex');
+        this.storageControl = tempBuffer.toString('hex');
         // 有 6 个字节是 Key B
-        buffer = this.buffer.slice(index, index + 6);
+        tempBuffer = this.buffer.slice(index, index + 6);
         index += 6;
-        this.keyB = buffer.toString('hex');
+        this.keyB = tempBuffer.toString('hex');
+    }
+
+    // 数据持久化
+    persistence(): Promise<any> {
+        const db: DBHelper = global.db;
+        return new Promise((resolve, reject) => {
+            db.get(`select 1 from m1 where uid = ? and expireTime = ?`,
+                [this.uid, this.expireTime]
+            ).then(res => {
+                if (!res) {
+                    db.run(`
+                    insert into m1 (
+                    buffer,
+                    uid, floor, expireTime,
+                    elevator1, elevator2,
+                    rollCode1, rollCode2,
+                    keyA, keyB
+                    ) values (
+                    ?,
+                    ?, ?, ?,
+                    ?, ?,
+                    ?, ?,
+                    ?, ?
+                    )
+                    `, [
+                        this.buffer,
+                        this.uid, this.floor, this.expireTime,
+                        this.elevator1, this.elevator2,
+                        this.rollCode1, this.rollCode2,
+                        this.keyA, this.keyB
+                    ])
+                        .then(res => {
+                            resolve(res);
+                        })
+                } else {
+                    reject();
+                }
+            }).catch(err => {
+                reject(err);
+            })
+        })
+    }
+
+    list(): Promise<any> {
+        const db: DBHelper = global.db
+        return new Promise((resolve, reject) => {
+            db.all('select * from m1', [])
+                .then(res => {
+                    resolve(res);
+                })
+        });
     }
 }

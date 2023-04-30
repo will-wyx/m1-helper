@@ -24,6 +24,7 @@ declare global {
     interface Window {
         // [key: string]: any
         electronAPI: {
+            loadData: () => Promise<any>;
             importFile: () => Promise<any>;
             exit: () => void;
         }

@@ -2,7 +2,8 @@ import {app, BrowserWindow, shell, ipcMain} from 'electron'
 import {release} from 'node:os'
 import {join} from 'node:path'
 import DBHelper from "./DBHelper";
-import './FileImport';
+import importFile from './FileImport';
+import ParkPlace from "./protocol/ParkPlace";
 
 // The built directory structure
 //
@@ -44,6 +45,7 @@ const indexHtml = join(process.env.DIST, 'index.html')
 
 const dbhelper = new DBHelper('database.db');
 dbhelper.init();
+global.db = dbhelper;
 
 async function createWindow() {
     win = new BrowserWindow({
@@ -58,6 +60,7 @@ async function createWindow() {
             contextIsolation: true,
         },
     })
+    global.webContents = win.webContents;
 
     if (process.env.VITE_DEV_SERVER_URL) { // electron-vite-vue#298
         win.loadURL(url).then()
@@ -120,3 +123,12 @@ ipcMain.handle('open-win', (_, arg) => {
         childWindow.loadFile(indexHtml, {hash: arg}).then()
     }
 })
+
+const protocol = new ParkPlace();
+
+ipcMain.handle('import-file', (event, args) => {
+    importFile(protocol);
+})
+
+ipcMain.handle('load-data', protocol.list)
+

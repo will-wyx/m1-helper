@@ -7,7 +7,7 @@ export default class BaseProtocol {
     // 厂商数据
     protected factoryData: Buffer;
 
-    constructor(buffer: Buffer) {
+    decode(buffer: Buffer) {
         this.buffer = buffer;
     }
 }

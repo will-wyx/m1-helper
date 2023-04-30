@@ -1,10 +1,8 @@
 <script setup lang="ts">
 function handleClick({key}: { key: string }) {
-    // window.electronAPI.test(key);
     switch (key) {
         case 'import':
-            window.electronAPI.importFile()
-                .then()
+            window.electronAPI.importFile().then()
             break;
         case 'exit':
             window.electronAPI.exit()
