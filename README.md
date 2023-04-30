@@ -69,3 +69,27 @@ export default {
 
 - [dependencies vs devDependencies](https://github.com/electron-vite/vite-plugin-electron-renderer#dependencies-vs-devdependencies)
 - [C/C++ addons, Node.js modules - Pre-Bundling](https://github.com/electron-vite/vite-plugin-electron-renderer#dependency-pre-bundling)
+
+## Buffer
+```javascript
+function hexToBuffer(hex) {
+    if (!hex)
+        return null;
+    let bytes = [];
+    hex = hex.trim().toLowerCase();
+    for (let i = 0, len = hex.length / 2; i < len; ++i) {
+        let subhex = hex.substring(i * 2, i * 2 + 2);
+        bytes.push(parseInt(subhex, 16));
+    }
+    return Buffer.from(bytes);
+}
+
+function bufferToHex(buf) {
+    let iter = buf.values();
+    let hexArr = [];
+    for (let item of iter) {
+        hexArr.push(item.toString(16));
+    }
+    console.log(hexArr.join(''));
+}
+```
