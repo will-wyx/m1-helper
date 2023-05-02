@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import {onMounted, ref} from "vue";
+import {onMounted, onUnmounted, ref} from "vue";
+import {message} from 'ant-design-vue';
 
 const columns = [
-    {title: 'UID', key: 'uid', dataIndex: 'uid'},
-    {title: '梯号1', key: 'elevator1', dataIndex: 'elevator1'},
-    {title: '梯号2', key: 'elevator2', dataIndex: 'elevator2'},
+    {title: 'UID', key: 'uid', dataIndex: 'uid', width: 180},
+    {title: '梯号', key: 'elevator', dataIndex: 'elevator', width: 180},
     {title: '楼层', key: 'floor', dataIndex: 'floor', width: 220, ellipsis: true},
+    {title: '过期时间', key: 'expireTime', dataIndex: 'expireTime'},
     {title: 'KeyA', key: 'keyA', dataIndex: 'keyA'},
     {title: 'KeyB', key: 'keyB', dataIndex: 'keyB'},
 ];
@@ -14,9 +15,20 @@ const data = ref([]);
 onMounted(() => {
     loadData();
     window.electronAPI.addImportSuccessListener(() => {
+        message.success('导入成功');
         loadData();
     })
 })
+
+onUnmounted(() => {
+    window.electronAPI.removeImportSuccessListener()
+})
+
+function toHexString(bytes) {
+    return bytes.reduce((str, byte) => {
+        return str + byte.toString(16).padStart(2, '0')
+    }, '')
+}
 
 function loadData() {
     window.electronAPI.loadData()
@@ -24,6 +36,8 @@ function loadData() {
             data.value = rows.map(row => {
                 return {
                     uid: row.uid,
+                    expireTime: toHexString(row.expireTime),
+                    elevator: `${row.elevator1}, ${row.elevator1}`,
                     elevator1: row.elevator1,
                     elevator2: row.elevator2,
                     floor: row.floor,
@@ -41,6 +55,7 @@ function loadData() {
             :data-source="data"
             size="small"
             row-class-name="equal-width"
+            :pagination="false"
     >
 
     </a-table>

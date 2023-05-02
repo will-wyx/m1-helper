@@ -102,6 +102,10 @@ contextBridge.exposeInMainWorld('electronAPI', {
     addImportSuccessListener: (fn) => {
         store.importSuccess = fn;
     },
+    removeImportSuccessListener: () => {
+        store.importSuccess = () => {
+        };
+    },
     loadData: () => {
         return new Promise((resolve, reject) => {
             ipcRenderer

@@ -25,6 +25,7 @@ declare global {
         // [key: string]: any
         electronAPI: {
             addImportSuccessListener: (fn: () => void) => void,
+            removeImportSuccessListener: () => void,
             loadData: () => Promise<any>;
             importFile: () => Promise<any>;
             exit: () => void;
