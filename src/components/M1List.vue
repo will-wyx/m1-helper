@@ -12,6 +12,13 @@ const columns = [
 const data = ref([]);
 
 onMounted(() => {
+    loadData();
+    window.electronAPI.addImportSuccessListener(() => {
+        loadData();
+    })
+})
+
+function loadData() {
     window.electronAPI.loadData()
         .then((rows) => {
             data.value = rows.map(row => {
@@ -24,8 +31,8 @@ onMounted(() => {
                     keyB: row.keyB
                 }
             })
-        })
-})
+        });
+}
 </script>
 
 <template>

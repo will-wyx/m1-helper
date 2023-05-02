@@ -93,7 +93,15 @@ window.onmessage = (ev) => {
 
 setTimeout(removeLoading, 4999)
 
+const store = {
+    importSuccess: () => {
+    }
+}
+
 contextBridge.exposeInMainWorld('electronAPI', {
+    addImportSuccessListener: (fn) => {
+        store.importSuccess = fn;
+    },
     loadData: () => {
         return new Promise((resolve, reject) => {
             ipcRenderer
@@ -121,4 +129,9 @@ contextBridge.exposeInMainWorld('electronAPI', {
     exit: () => {
         console.log('exit');
     }
+})
+
+
+ipcRenderer.on('import-success', () => {
+    store.importSuccess()
 })
