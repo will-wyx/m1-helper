@@ -5,7 +5,7 @@ const columns = [
     {title: 'UID', key: 'uid', dataIndex: 'uid'},
     {title: '梯号1', key: 'elevator1', dataIndex: 'elevator1'},
     {title: '梯号2', key: 'elevator2', dataIndex: 'elevator2'},
-    {title: '楼层', key: 'floor', dataIndex: 'floor'},
+    {title: '楼层', key: 'floor', dataIndex: 'floor', width: 220, ellipsis: true},
     {title: 'KeyA', key: 'keyA', dataIndex: 'keyA'},
     {title: 'KeyB', key: 'keyB', dataIndex: 'keyB'},
 ];
@@ -29,11 +29,18 @@ onMounted(() => {
 </script>
 
 <template>
-    <a-table :columns="columns" :data-source="data" size="small">
+    <a-table
+            :columns="columns"
+            :data-source="data"
+            size="small"
+            row-class-name="equal-width"
+    >
 
     </a-table>
 </template>
 
-<style scoped>
-
+<style>
+.equal-width {
+    font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+}
 </style>

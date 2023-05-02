@@ -24,7 +24,7 @@ export default class DBHelper {
         this.db.run(`
 create table if not exists m1 (
 buffer blob,
-uid text, floor integer, expireTime blob, 
+uid text, floor text, expireTime blob, 
 elevator1 integer, elevator2 integer, 
 rollCode1 integer, rollCode2 integer, 
 keyA text, keyB text)

@@ -142,7 +142,7 @@ export default class ParkPlace extends BaseProtocol {
     list(): Promise<any> {
         const db: DBHelper = global.db
         return new Promise((resolve, reject) => {
-            db.all('select * from m1', [])
+            db.all('select * from m1 order by elevator1, uid', [])
                 .then(res => {
                     resolve(res);
                 })
