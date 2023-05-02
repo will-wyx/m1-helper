@@ -5,7 +5,7 @@ export default class ParkPlace extends BaseProtocol {
     // 楼层号（从右向左逐位表示，最右侧为 1 层）
     private floor: string;
     // 到期时间
-    private expireTime: Buffer;
+    private expireTime: string;
     // 电梯号 1
     private elevator1: number;
     // 滚码 1
@@ -53,7 +53,8 @@ export default class ParkPlace extends BaseProtocol {
         // 接下来 2 个字节不知道是什么
         index += 2;
         // 接下来 9 个字节是到期时间
-        this.expireTime = this.buffer.slice(index, index + 9);
+        tempBuffer = this.buffer.slice(index, index + 9);
+        this.expireTime = tempBuffer.toString('hex')
         index += 9;
         // 接下来 5 个又不知道是什么了
         index += 5;
@@ -142,7 +143,7 @@ export default class ParkPlace extends BaseProtocol {
     list(): Promise<any> {
         const db: DBHelper = global.db
         return new Promise((resolve, reject) => {
-            db.all('select * from m1 order by elevator1, uid', [])
+            db.all('select * from m1 order by elevator1, uid, expireTime', [])
                 .then(res => {
                     resolve(res);
                 })

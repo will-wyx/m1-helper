@@ -127,7 +127,7 @@ ipcMain.handle('open-win', (_, arg) => {
 const protocol = new ParkPlace();
 
 ipcMain.handle('import-file', (event, args) => {
-    importFile(protocol);
+    importFile();
 })
 
 ipcMain.handle('load-data', protocol.list)

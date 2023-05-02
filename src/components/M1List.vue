@@ -24,20 +24,14 @@ onUnmounted(() => {
     window.electronAPI.removeImportSuccessListener()
 })
 
-function toHexString(bytes) {
-    return bytes.reduce((str, byte) => {
-        return str + byte.toString(16).padStart(2, '0')
-    }, '')
-}
-
 function loadData() {
     window.electronAPI.loadData()
         .then((rows) => {
             data.value = rows.map(row => {
                 return {
                     uid: row.uid,
-                    expireTime: toHexString(row.expireTime),
-                    elevator: `${row.elevator1}, ${row.elevator1}`,
+                    expireTime: row.expireTime,
+                    elevator: `${row.elevator1.toString(16).padStart(2, '0')}, ${row.elevator2.toString(16).padStart(2, '0')}`,
                     elevator1: row.elevator1,
                     elevator2: row.elevator2,
                     floor: row.floor,
